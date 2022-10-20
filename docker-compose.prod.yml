@@ -1,26 +1,24 @@
 services:
-  web_app:
+  web:
     build: ./app
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./app/:/usr/src/app/:Z
+    command: gunicorn hello_django.wsgi:application --bind  0.0.0.0:8000
     ports:
       - 8000:8000
     env_file:
-      - ./app/.env.dev
+      - ./app/.env.prod
+    container_name: my_django
     depends_on:
       - postgres
-    container_name: my_django
-  
+
   postgres:
     image: postgres:14.3
-    volumes: 
+    volumes:
       - ./postgres/pg_data:/var/lib/postgresql/data:Z
     ports:
       - 5432:5432
     env_file:
-      - ./postgres/.env.dev
+      - ./postgres/.env.prod
     container_name: my_postgres
 
 volumes:
-  pg_data:
+  pg_data
