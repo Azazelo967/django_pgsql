@@ -1,16 +1,19 @@
 services:
-  web:
-    build: ./app
-    command: gunicorn hello_django.wsgi:application --bind  0.0.0.0:8000
+  web_prod:
+    image: django_prod:v2
+    build: 
+      context: ./app
+      dockerfile: Dockerfile.prod
+    command: gunicorn hello_django.wsgi:application --bind 0.0.0.0:8000
     ports:
       - 8000:8000
     env_file:
       - ./app/.env.prod
     container_name: my_django
     depends_on:
-      - postgres
+      - postgres_prod
 
-  postgres:
+  postgres_prod:
     image: postgres:14.3
     volumes:
       - ./postgres/pg_data:/var/lib/postgresql/data:Z
@@ -19,6 +22,3 @@ services:
     env_file:
       - ./postgres/.env.prod
     container_name: my_postgres
-
-volumes:
-  pg_data
