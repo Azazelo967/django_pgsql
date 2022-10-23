@@ -1,9 +1,12 @@
 services:
   nginx:
-    image: nginx_prod
+    image: nginx_prod:v1
     build: ./nginx
     ports:
       - 80:80
+    volumes:
+      - ./app/staticfiles:/home/app/web/staticfiles:Z
+    container_name: my_nginx
     depends_on:
       - web_prod
 
@@ -13,8 +16,8 @@ services:
       context: ./app
       dockerfile: Dockerfile.prod
     command: gunicorn hello_django.wsgi:application --bind 0.0.0.0:8000
-    expose:
-      - 8000
+    ports:
+      - 8000:8000
     env_file:
       - ./app/.env.prod
     container_name: my_django
